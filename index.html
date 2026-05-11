@@ -74,6 +74,9 @@
             <button tab-target="practice" class="tab-btn px-5 py-3 rounded-lg bg-gray-200 dark:bg-gray-700 font-medium">
                 <i class="fa fa-pencil mr-2"></i>场景编写练习
             </button>
+            <button tab-target="agent" class="tab-btn px-5 py-3 rounded-lg bg-gray-200 dark:bg-gray-700 font-medium">
+                <i class="fa fa-robot mr-2"></i>智能助手
+            </button>
         </div>
 
         <!-- 1. 知识卡片区域 -->
@@ -256,6 +259,20 @@
                     <button id="new-practice" class="mt-6 w-full py-3 bg-primary text-white rounded-lg">
                         <i class="fa fa-plus-circle mr-2"></i>新的练习
                     </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. 智能助手 -->
+        <div id="agent" class="tab-content hidden">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-2xl font-bold mb-6 text-center">智能助手</h2>
+                <div class="bg-white dark:bg-gray-800 rounded-xl card-shadow overflow-hidden">
+                    <style>
+                        * { box-sizing: border-box; }
+                        #coze-web-sdk { width: 100%; height: 600px; border: none; }
+                    </style>
+                    <iframe id="coze-web-sdk" src="https://sdk.coze.site"></iframe>
                 </div>
             </div>
         </div>
@@ -567,6 +584,45 @@
 
         // 初始化
         startQuiz();
+
+        // 智能助手 SDK 初始化
+        const COZE_WEB_SDK_ORIGIN = 'https://sdk.coze.site';
+        
+        window.addEventListener('message', (event) => {
+            // 只处理来自 sdk 的消息
+            if (event.origin !== COZE_WEB_SDK_ORIGIN) {
+                return;
+            }
+            
+            const data = event.data;
+            // sdk 资源加载完成的通知，所有消息都必须在此后发送才有效
+            if (data.type === 'IFRAME_READY') {
+                const cozeWebSDK = document.getElementById('coze-web-sdk');
+                if (cozeWebSDK) {
+                    // 必须步骤：初始化 web SDK
+                    cozeWebSDK.contentWindow.postMessage({
+                        type: 'INIT',
+                        payload: {
+                            token: 'eyJhbGciOiJSUzI1NiIsImtpZCI6ImZiZTE0YzcyLWZmMDgtNDdjMi1iMmEyLTMzNDg1M2IzOTE2OCJ9.eyJpc3MiOiJodHRwczovL2FwaS5jb3plLmNuIiwiYXVkIjpbIlJGOHQ4UGQ5dURwclRrNG9sQ2l0Q21zZEJmT2RsSkxCIl0sImV4cCI6ODIxMDI2Njg3Njc5OSwiaWF0IjoxNzc4NDkxNDk3LCJzdWIiOiJzcGlmZmU6Ly9hcGkuY296ZS5jbi93b3JrbG9hZF9pZGVudGl0eS9pZDo3NjIzMjQ0ODYwODcwMzYxMTI0Iiwic3JjIjoiaW5ib3VuZF9hdXRoX2FjY2Vzc190b2tlbl9pZDo3NjM4NTYyODE3MjA0ODEzODU4In0.zEkNKJ5oChoqZ9qjpLu4tePT-eKCL8QmuUHCqVjUJbuyBdK1CqtA4PVGEZ9aD176XL4OYCyc1RXG_JYNq1tNOqIy2w2DKe0jRB8hHhisvszDQMtvh-cPcid3Vp9hbQgPTdw3PnKWN_ZOZUrGlWnpQ8mQpom1UOmkbX2qCpRtHvwhkhAsWAistglksi6iWG4oVfpzDT_7SALMEllUtOt-8VFNQjbLpWmCYra0e4hxouSFZT7OeuS28DlbLe8nwZs7kq0V7jwTEY7HrJNzkN6jYiLr0izpQzFasUghraRCh1j9wm5HYHv4YNuOUZ5n1J5nqxmjkW4QYKqoaN0CSWTHyw',
+                            projectId: '7623242875668660265',
+                        }
+                    }, COZE_WEB_SDK_ORIGIN);
+                }
+            }
+            // token 过期的通知
+            if (data.type === 'TOKEN_EXPIRED') {
+                const cozeWebSDK = document.getElementById('coze-web-sdk');
+                if (cozeWebSDK) {
+                    // 更新 token
+                    cozeWebSDK.contentWindow.postMessage({
+                        type: 'UPDATE_TOKEN',
+                        payload: {
+                            token: 'eyJhbGciOiJSUzI1NiIsImtpZCI6ImZiZTE0YzcyLWZmMDgtNDdjMi1iMmEyLTMzNDg1M2IzOTE2OCJ9.eyJpc3MiOiJodHRwczovL2FwaS5jb3plLmNuIiwiYXVkIjpbIlJGOHQ4UGQ5dURwclRrNG9sQ2l0Q21zZEJmT2RsSkxCIl0sImV4cCI6ODIxMDI2Njg3Njc5OSwiaWF0IjoxNzc4NDkxNDk3LCJzdWIiOiJzcGlmZmU6Ly9hcGkuY296ZS5jbi93b3JrbG9hZF9pZGVudGl0eS9pZDo3NjIzMjQ0ODYwODcwMzYxMTI0Iiwic3JjIjoiaW5ib3VuZF9hdXRoX2FjY2Vzc190b2tlbl9pZDo3NjM4NTYyODE3MjA0ODEzODU4In0.zEkNKJ5oChoqZ9qjpLu4tePT-eKCL8QmuUHCqVjUJbuyBdK1CqtA4PVGEZ9aD176XL4OYCyc1RXG_JYNq1tNOqIy2w2DKe0jRB8hHhisvszDQMtvh-cPcid3Vp9hbQgPTdw3PnKWN_ZOZUrGlWnpQ8mQpom1UOmkbX2qCpRtHvwhkhAsWAistglksi6iWG4oVfpzDT_7SALMEllUtOt-8VFNQjbLpWmCYra0e4hxouSFZT7OeuS28DlbLe8nwZs7kq0V7jwTEY7HrJNzkN6jYiLr0izpQzFasUghraRCh1j9wm5HYHv4YNuOUZ5n1J5nqxmjkW4QYKqoaN0CSWTHyw',
+                        }
+                    }, COZE_WEB_SDK_ORIGIN);
+                }
+            }
+        });
     </script>
 </body>
 </html>
