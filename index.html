@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能提示词学习与闯关平台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        // Tailwind 配置
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#722ED1',
+                        success: '#00B42A',
+                        warning: '#FF7D00',
+                        danger: '#F53F3F',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .card-shadow {
+                box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.1);
+            }
+            .card-hover {
+                transition: all 0.3s ease;
+            }
+            .card-hover:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            }
+            .progress-animation {
+                transition: width 0.5s ease;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 min-h-screen transition-colors duration-300">
+    <!-- 导航栏 -->
+    <header class="sticky top-0 z-50 bg-white dark:bg-gray-800 shadow-sm">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <i class="fa fa-graduation-cap text-primary text-2xl"></i>
+                <h1 class="text-xl md:text-2xl font-bold">提示词学习闯关平台</h1>
+            </div>
+            <div class="flex items-center gap-4">
+                <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
+                    <i class="fa fa-moon-o dark:hidden text-xl"></i>
+                    <i class="fa fa-sun-o hidden dark:inline text-xl text-yellow-400"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- 选项卡导航 -->
+        <div class="flex flex-wrap justify-center gap-2 md:gap-4 mb-8">
+            <button tab-target="knowledge" class="tab-btn active px-5 py-3 rounded-lg bg-primary text-white font-medium">
+                <i class="fa fa-book mr-2"></i>提示词知识卡片
+            </button>
+            <button tab-target="theory" class="tab-btn px-5 py-3 rounded-lg bg-gray-200 dark:bg-gray-700 font-medium">
+                <i class="fa fa-list-alt mr-2"></i>基础理论闯关
+            </button>
+            <button tab-target="practice" class="tab-btn px-5 py-3 rounded-lg bg-gray-200 dark:bg-gray-700 font-medium">
+                <i class="fa fa-pencil mr-2"></i>场景编写练习
+            </button>
+        </div>
+
+        <!-- 1. 知识卡片区域 -->
+        <div id="knowledge" class="tab-content block">
+            <h2 class="text-2xl font-bold mb-6 text-center">提示词核心知识点库</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- 知识卡片1 -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 card-shadow card-hover">
+                    <div class="flex items-center mb-4 text-primary">
+                        <i class="fa fa-lightbulb-o text-2xl mr-3"></i>
+                        <h3 class="text-lg font-bold">清晰明确原则</h3>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-300">提示词必须具体、清晰，避免模糊表述。包含明确的任务、格式、要求，AI才能准确理解你的意图。</p>
+                    <div class="mt-4 text-sm bg-blue-50 dark:bg-blue-900/30 p-3 rounded">
+                        <span class="font-semibold">反例：</span>写一篇文章<br>
+                        <span class="font-semibold">正例：</span>写一篇800字的关于人工智能教育应用的议论文
+                    </div>
+                </div>
+
+                <!-- 知识卡片2 -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 card-shadow card-hover">
+                    <div class="flex items-center mb-4 text-secondary">
+                        <i class="fa fa-list-ul text-2xl mr-3"></i>
+                        <h3 class="text-lg font-bold">角色设定法</h3>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-300">给AI指定一个专业角色，如专家、教师、设计师等，让AI从对应角色的专业视角回答问题，提升输出质量。</p>
+                    <div class="mt-4 text-sm bg-purple-50 dark:bg-purple-900/30 p-3 rounded">
+                        示例：你是一名资深小学数学老师，用通俗易懂的语言讲解鸡兔同笼问题
+                    </div>
+                </div>
+
+                <!-- 知识卡片3 -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 card-shadow card-hover">
+                    <div class="flex items-center mb-4 text-success">
+                        <i class="fa fa-code text-2xl mr-3"></i>
+                        <h3 class="text-lg font-bold">格式指定法</h3>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-300">明确要求AI输出的格式，如表格、列表、JSON、markdown、步骤拆解等，让结果更规整、便于使用。</p>
+                    <div class="mt-4 text-sm bg-green-50 dark:bg-green-900/30 p-3 rounded">
+                        示例：请以表格形式输出，包含名称、用途、优缺点三列内容
+                    </div>
+                </div>
+
+                <!-- 知识卡片4 -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 card-shadow card-hover">
+                    <div class="flex items-center mb-4 text-warning">
+                        <i class="fa fa-check-square-o text-2xl mr-3"></i>
+                        <h3 class="text-lg font-bold">约束条件</h3>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-300">添加字数、语言风格、时间范围、禁止内容等约束条件，让输出结果更符合预期，避免偏离需求。</p>
+                    <div class="mt-4 text-sm bg-orange-50 dark:bg-orange-900/30 p-3 rounded">
+                        示例：字数控制在500字以内，语言正式，不要使用网络流行语
+                    </div>
+                </div>
+
+                <!-- 知识卡片5 -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 card-shadow card-hover">
+                    <div class="flex items-center mb-4 text-danger">
+                        <i class="fa fa-comments text-2xl mr-3"></i>
+                        <h3 class="text-lg font-bold">上下文连贯性</h3>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-300">多轮对话中保持上下文一致，复杂任务可以分步骤描述，让AI理解完整逻辑，提升交互准确性。</p>
+                    <div class="mt-4 text-sm bg-red-50 dark:bg-red-900/30 p-3 rounded">
+                        技巧：先说明背景，再提出任务，最后补充要求，形成完整逻辑链
+                    </div>
+                </div>
+
+                <!-- 知识卡片6 -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 card-shadow card-hover">
+                    <div class="flex items-center mb-4 text-primary">
+                        <i class="fa fa-forward text-2xl mr-3"></i>
+                        <h3 class="text-lg font-bold">示例引导法</h3>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-300">提供1-2个输出示例，让AI直接参考你的格式和风格，是最高效的提示词优化方法之一。</p>
+                    <div class="mt-4 text-sm bg-blue-50 dark:bg-blue-900/30 p-3 rounded">
+                        示例：请像下面这样回答：问题：XX 答案：XX
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. 基础理论闯关 -->
+        <div id="theory" class="tab-content hidden">
+            <div class="max-w-3xl mx-auto">
+                <h2 class="text-2xl font-bold mb-6 text-center">基础理论知识闯关</h2>
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 card-shadow mb-6">
+                    <div class="mb-4">
+                        <div class="flex justify-between mb-2">
+                            <span>答题进度</span>
+                            <span id="score-text">0/5 正确</span>
+                        </div>
+                        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
+                            <div id="progress-bar" class="bg-primary h-3 rounded-full progress-animation" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <div id="question-container" class="my-6">
+                        <!-- 题目动态加载 -->
+                    </div>
+
+                    <div id="answer-buttons" class="grid gap-3 my-4">
+                        <!-- 选项动态加载 -->
+                    </div>
+
+                    <div class="flex justify-between mt-6">
+                        <button id="prev-btn" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg disabled:opacity-50" disabled>
+                            <i class="fa fa-arrow-left mr-1"></i>上一题
+                        </button>
+                        <button id="next-btn" class="px-4 py-2 bg-primary text-white rounded-lg disabled:opacity-50" disabled>
+                            下一题<i class="fa fa-arrow-right ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 结果弹窗 -->
+                <div id="theory-result" class="hidden bg-white dark:bg-gray-800 rounded-xl p-8 card-shadow text-center max-w-md mx-auto">
+                    <i id="result-icon" class="fa fa-trophy text-5xl text-yellow-500 mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">闯关完成！</h3>
+                    <p id="final-score" class="text-lg mb-4">最终得分：0/5</p>
+                    <p id="result-desc" class="mb-6 text-gray-600 dark:text-gray-300"></p>
+                    <button id="restart-theory" class="px-6 py-3 bg-primary text-white rounded-lg">
+                        重新开始闯关
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. 场景编写练习 -->
+        <div id="practice" class="tab-content hidden">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-2xl font-bold mb-6 text-center">场景化提示词编写练习</h2>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- 场景区域 -->
+                    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 card-shadow">
+                        <h3 class="text-lg font-bold mb-4 flex items-center">
+                            <i class="fa fa-bullseye text-primary mr-2"></i>练习场景
+                        </h3>
+                        <div id="scene-container" class="min-h-[200px]">
+                            <p class="text-gray-600 dark:text-gray-300">请点击下方按钮随机获取一个练习场景</p>
+                        </div>
+                        <button id="get-scene-btn" class="mt-4 w-full py-3 bg-primary text-white rounded-lg">
+                            <i class="fa fa-refresh mr-2"></i>随机获取场景
+                        </button>
+                    </div>
+
+                    <!-- 编写区域 -->
+                    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 card-shadow">
+                        <h3 class="text-lg font-bold mb-4 flex items-center">
+                            <i class="fa fa-pencil-square-o text-secondary mr-2"></i>提示词编写
+                        </h3>
+                        <textarea id="prompt-input" class="w-full h-[150px] p-3 border dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 resize-none" placeholder="请根据场景编写你的提示词..."></textarea>
+                        <button id="submit-prompt" class="mt-4 w-full py-3 bg-secondary text-white rounded-lg" disabled>
+                            <i class="fa fa-check-circle mr-2"></i>提交并打分
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 评分结果 -->
+                <div class="mt-6 bg-white dark:bg-gray-800 rounded-xl p-6 card-shadow hidden" id="score-container">
+                    <h3 class="text-lg font-bold mb-4 flex items-center">
+                        <i class="fa fa-star text-yellow-500 mr-2"></i>练习评分
+                    </h3>
+                    <div class="flex items-center justify-center mb-4">
+                        <div class="w-24 h-24 rounded-full flex items-center justify-center border-8 border-yellow-400">
+                            <span id="score-number" class="text-3xl font-bold">0</span>
+                            <span class="text-xl ml-1">/100</span>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div>
+                            <h4 class="font-semibold">评分标准：</h4>
+                            <p id="score-standard" class="text-gray-600 dark:text-gray-300"></p>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold">优化建议：</h4>
+                            <p id="score-advice" class="text-gray-600 dark:text-gray-300"></p>
+                        </div>
+                    </div>
+                    <button id="new-practice" class="mt-6 w-full py-3 bg-primary text-white rounded-lg">
+                        <i class="fa fa-plus-circle mr-2"></i>新的练习
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="mt-12 py-6 bg-white dark:bg-gray-800 shadow-sm">
+        <div class="container mx-auto px-4 text-center">
+            <p>智能提示词学习闯关平台 © 版权所有</p>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">专注提示词教学与实战练习</p>
+        </div>
+    </footer>
+
+    <script>
+        // 深色模式切换
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+        });
+
+        // 初始化主题
+        if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+
+        // 选项卡切换
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // 重置所有选项卡
+                tabBtns.forEach(b => {
+                    b.classList.remove('active', 'bg-primary', 'text-white');
+                    b.classList.add('bg-gray-200', 'dark:bg-gray-700');
+                });
+                tabContents.forEach(c => c.classList.add('hidden'));
+                
+                // 激活当前选项卡
+                btn.classList.add('active', 'bg-primary', 'text-white');
+                btn.classList.remove('bg-gray-200', 'dark:bg-gray-700');
+                document.getElementById(btn.getAttribute('tab-target')).classList.remove('hidden');
+            });
+        });
+
+        // 基础理论闯关数据
+        const questions = [
+            {
+                question: "以下哪项属于优秀提示词的核心原则？",
+                options: ["越简短越好", "清晰明确，包含具体要求", "使用专业术语", "让AI自由发挥"],
+                answer: 1
+            },
+            {
+                question: "“你是一名专业的健康营养师”属于提示词的哪种技巧？",
+                options: ["格式指定", "角色设定", "约束条件", "示例引导"],
+                answer: 1
+            },
+            {
+                question: "如果希望AI输出规整的表格，应该在提示词中添加什么？",
+                options: ["字数限制", "角色设定", "格式要求", "语言风格"],
+                answer: 2
+            },
+            {
+                question: "以下哪个提示词更优秀？",
+                options: [
+                    "写个文案",
+                    "写一篇产品宣传文案，突出性价比，适合年轻人",
+                    "为新款无线耳机写一段100字的宣传文案，风格活泼，突出续航和性价比"
+                ],
+                answer: 2
+            },
+            {
+                question: "在提示词中添加示例的主要作用是？",
+                options: ["增加字数", "让AI参考格式和风格", "降低AI理解难度", "让提示词更专业"],
+                answer: 1
+            }
+        ];
+
+        // 理论闯关逻辑
+        let currentQuestion = 0;
+        let userAnswers = [];
+        let score = 0;
+
+        const questionContainer = document.getElementById('question-container');
+        const answerButtons = document.getElementById('answer-buttons');
+        const nextBtn = document.getElementById('next-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const progressBar = document.getElementById('progress-bar');
+        const scoreText = document.getElementById('score-text');
+        const theoryResult = document.getElementById('theory-result');
+        const finalScore = document.getElementById('final-score');
+        const resultDesc = document.getElementById('result-desc');
+        const restartTheory = document.getElementById('restart-theory');
+
+        // 初始化题目
+        function startQuiz() {
+            currentQuestion = 0;
+            userAnswers = [];
+            score = 0;
+            theoryResult.classList.add('hidden');
+            document.getElementById('theory').querySelector('.max-w-3xl > div').classList.remove('hidden');
+            showQuestion(questions[currentQuestion]);
+            updateProgress();
+        }
+
+        // 显示题目
+        function showQuestion(question) {
+            questionContainer.innerHTML = `
+                <p class="text-lg font-medium mb-4">${currentQuestion + 1}. ${question.question}</p>
+            `;
+            
+            answerButtons.innerHTML = '';
+            question.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.classList.add('p-3', 'rounded-lg', 'border', 'dark:border-gray-600', 'text-left', 'hover:bg-gray-100', 'dark:hover:bg-gray-700', 'transition-colors');
+                button.innerHTML = `${String.fromCharCode(65 + index)}. ${option}`;
+                button.dataset.index = index;
+                
+                // 如果已经作答，显示答案
+                if (userAnswers[currentQuestion] !== undefined) {
+                    if (index === question.answer) {
+                        button.classList.add('bg-success', 'text-white', 'border-success');
+                    } else if (index === userAnswers[currentQuestion] && index !== question.answer) {
+                        button.classList.add('bg-danger', 'text-white', 'border-danger');
+                    }
+                }
+                
+                button.addEventListener('click', () => selectAnswer(index, button));
+                answerButtons.appendChild(button);
+            });
+            
+            // 按钮状态
+            prevBtn.disabled = currentQuestion === 0;
+            nextBtn.disabled = userAnswers[currentQuestion] === undefined;
+        }
+
+        // 选择答案
+        function selectAnswer(index, button) {
+            if (userAnswers[currentQuestion] !== undefined) return;
+            
+            userAnswers[currentQuestion] = index;
+            const correct = questions[currentQuestion].answer;
+            
+            // 显示正确/错误
+            const allButtons = answerButtons.querySelectorAll('button');
+            allButtons.forEach(btn => {
+                btn.classList.remove('hover:bg-gray-100', 'dark:hover:bg-gray-700');
+                if (parseInt(btn.dataset.index) === correct) {
+                    btn.classList.add('bg-success', 'text-white', 'border-success');
+                } else if (parseInt(btn.dataset.index) === index && index !== correct) {
+                    btn.classList.add('bg-danger', 'text-white', 'border-danger');
+                }
+                btn.disabled = true;
+            });
+            
+            // 计算分数
+            calculateScore();
+            nextBtn.disabled = false;
+        }
+
+        // 计算分数
+        function calculateScore() {
+            score = 0;
+            questions.forEach((q, i) => {
+                if (userAnswers[i] === q.answer) score++;
+            });
+            updateProgress();
+        }
+
+        // 更新进度
+        function updateProgress() {
+            const progress = (currentQuestion + 1) / questions.length * 100;
+            progressBar.style.width = `${progress}%`;
+            scoreText.textContent = `${score}/${questions.length} 正确`;
+        }
+
+        // 下一题
+        nextBtn.addEventListener('click', () => {
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                showQuestion(questions[currentQuestion]);
+            } else {
+                showResult();
+            }
+        });
+
+        // 上一题
+        prevBtn.addEventListener('click', () => {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                showQuestion(questions[currentQuestion]);
+            }
+        });
+
+        // 显示结果
+        function showResult() {
+            document.getElementById('theory').querySelector('.max-w-3xl > div').classList.add('hidden');
+            theoryResult.classList.remove('hidden');
+            finalScore.textContent = `最终得分：${score}/${questions.length}`;
+            
+            let desc, icon;
+            if (score === 5) {
+                desc = '太棒了！你已经完全掌握了提示词基础理论！';
+                icon = 'fa-trophy text-yellow-500';
+            } else if (score >= 3) {
+                desc = '表现不错！继续学习知识卡片就能拿满分！';
+                icon = 'fa-smile-o text-green-500';
+            } else {
+                desc = '加油！多看看知识卡片，重新挑战吧！';
+                icon = 'fa-frown-o text-gray-500';
+            }
+            
+            resultDesc.textContent = desc;
+            document.getElementById('result-icon').className = `fa ${icon} text-5xl mb-4`;
+        }
+
+        // 重新开始
+        restartTheory.addEventListener('click', startQuiz);
+
+        // 场景练习数据
+        const scenes = [
+            {
+                title: "学生作业辅导",
+                desc: "你需要让AI帮助小学生讲解数学题，要求语言简单、步骤清晰、有耐心，避免使用复杂公式",
+                standard: "1. 是否包含角色设定（老师/辅导员）2. 是否要求步骤拆解 3. 语言是否简单易懂 4. 是否有明确任务",
+                advice: "可以添加：你是一位有耐心的小学数学老师，请用通俗的语言一步步讲解题目，确保小学生能听懂"
+            },
+            {
+                title: "产品文案撰写",
+                desc: "为一款新款无线蓝牙耳机撰写宣传文案，要求突出续航长、音质好、性价比高，适合学生群体",
+                standard: "1. 是否明确产品和受众 2. 是否包含核心卖点 3. 是否有文案风格要求 4. 字数/格式要求",
+                advice: "可以添加：请为新款无线耳机写100字宣传文案，风格活泼，重点突出长续航、高音质和高性价比，面向学生群体"
+            },
+            {
+                title: "旅行计划制定",
+                desc: "让AI为你制定一份3天的重庆短途旅行计划，包含美食、景点、交通，预算适中，适合年轻人",
+                standard: "1. 是否明确地点、天数 2. 是否包含需求清单 3. 是否有预算要求 4. 格式是否清晰",
+                advice: "可以添加：请制定一份重庆3日游旅行计划，以表格形式呈现，包含每日景点、美食、交通，预算人均1000元左右"
+            },
+            {
+                title: "工作总结生成",
+                desc: "生成一份月度工作总结，结构清晰，包含工作内容、成果、问题、下月计划，正式简洁",
+                standard: "1. 是否明确文档类型 2. 是否包含结构要求 3. 语言风格是否正式 4. 是否有清晰模块",
+                advice: "可以添加：请帮我生成一份月度工作总结，分为工作内容、完成成果、问题不足、下月计划四个部分，语言正式简洁"
+            }
+        ];
+
+        // 场景练习逻辑
+        const sceneContainer = document.getElementById('scene-container');
+        const getSceneBtn = document.getElementById('get-scene-btn');
+        const promptInput = document.getElementById('prompt-input');
+        const submitPrompt = document.getElementById('submit-prompt');
+        const scoreContainer = document.getElementById('score-container');
+        const scoreNumber = document.getElementById('score-number');
+        const scoreStandard = document.getElementById('score-standard');
+        const scoreAdvice = document.getElementById('score-advice');
+        const newPractice = document.getElementById('new-practice');
+
+        let currentScene = null;
+
+        // 获取随机场景
+        getSceneBtn.addEventListener('click', () => {
+            currentScene = scenes[Math.floor(Math.random() * scenes.length)];
+            sceneContainer.innerHTML = `
+                <h4 class="font-bold text-lg mb-2">${currentScene.title}</h4>
+                <p class="text-gray-600 dark:text-gray-300">${currentScene.desc}</p>
+            `;
+            promptInput.value = '';
+            promptInput.disabled = false;
+            submitPrompt.disabled = false;
+            scoreContainer.classList.add('hidden');
+        });
+
+        // 监听输入
+        promptInput.addEventListener('input', () => {
+            submitPrompt.disabled = promptInput.value.trim() === '';
+        });
+
+        // 提交打分
+        submitPrompt.addEventListener('click', () => {
+            const prompt = promptInput.value.trim();
+            if (!prompt || !currentScene) return;
+            
+            // 模拟AI打分逻辑
+            let score = 0;
+            
+            // 打分规则
+            if (prompt.length > 20) score += 20;
+            if (/角色|你是|作为/.test(prompt)) score += 20;
+            if (/步骤|清晰|简单/.test(prompt)) score += 20;
+            if (/任务|写|生成|制定/.test(prompt)) score += 20;
+            if (/格式|表格|列表/.test(prompt)) score += 20;
+            
+            // 显示结果
+            scoreNumber.textContent = score;
+            scoreStandard.textContent = currentScene.standard;
+            scoreAdvice.textContent = currentScene.advice;
+            scoreContainer.classList.remove('hidden');
+        });
+
+        // 新练习
+        newPractice.addEventListener('click', () => {
+            sceneContainer.innerHTML = '<p class="text-gray-600 dark:text-gray-300">请点击下方按钮随机获取一个练习场景</p>';
+            promptInput.value = '';
+            scoreContainer.classList.add('hidden');
+            currentScene = null;
+        });
+
+        // 初始化
+        startQuiz();
+    </script>
+</body>
+</html>
