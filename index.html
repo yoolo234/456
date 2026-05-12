@@ -493,17 +493,12 @@
                 }
                 const data = await response.json();
                 questionDatabase = data.questions || [];
-                console.log('Question database loaded:', questionDatabase.length, 'questions');
-                console.log('Available question IDs:', questionDatabase.map(q => q.id));
                 // 数据库加载完成后，初始化闯关
                 startQuiz();
                 return true;
             } catch (error) {
-                console.error('Failed to load database:', error);
-                console.log('Using backup questions...');
                 // 使用备用数据
                 questionDatabase = getBackupQuestions();
-                console.log('Backup database loaded:', questionDatabase.length, 'questions');
                 // 即使使用备用数据也要初始化闯关
                 startQuiz();
                 return false;
@@ -558,12 +553,8 @@
 
         // 从数据库中随机抽取题目
         function getRandomQuestions(count = 5) {
-            console.log('getRandomQuestions called with count:', count);
-            console.log('Database size:', questionDatabase.length);
             const shuffled = [...questionDatabase].sort(() => Math.random() - 0.5);
-            const selected = shuffled.slice(0, Math.min(count, shuffled.length));
-            console.log('Selected question IDs:', selected.map(q => q.id));
-            return selected;
+            return shuffled.slice(0, Math.min(count, shuffled.length));
         }
 
         // 页面加载时初始化数据库
@@ -588,13 +579,11 @@
 
         // 初始化题目（随机选题）
         function startQuiz() {
-            console.log('=== Starting Quiz ===');
             currentQuestion = 0;
             userAnswers = [];
             score = 0;
             // 从数据库中随机抽取5道题目
             currentQuestions = getRandomQuestions(5);
-            console.log('Quiz initialized with', currentQuestions.length, 'questions');
             theoryResult.classList.add('hidden');
             document.getElementById('theory').querySelector('.max-w-3xl > div').classList.remove('hidden');
             showQuestion(currentQuestions[currentQuestion]);
@@ -646,25 +635,39 @@
             // 显示正确/错误
             const allButtons = answerButtons.querySelectorAll('button');
             allButtons.forEach(btn => {
-                btn.classList.remove('hover:bg-gray-100', 'dark:hover:bg-gray-700');
+                btn.classList.remove('hover:bg-gray-100', 'dark:hover:bg-gray-700', 'hover:border-primary', 'hover:bg-gray-50');
+                btn.classList.add('cursor-not-allowed');
                 if (parseInt(btn.dataset.index) === correct) {
                     btn.classList.add('bg-success', 'text-white', 'border-success');
+                    btn.innerHTML = `<span class="inline-block w-8 h-8 rounded-full bg-white/20 text-center leading-8 mr-3 font-medium">${String.fromCharCode(65 + parseInt(btn.dataset.index))}</span>${btn.textContent.replace(/^[A-D]\.\s*/, '')}`;
                 } else if (parseInt(btn.dataset.index) === index && index !== correct) {
                     btn.classList.add('bg-danger', 'text-white', 'border-danger');
+                    btn.innerHTML = `<span class="inline-block w-8 h-8 rounded-full bg-white/20 text-center leading-8 mr-3 font-medium">${String.fromCharCode(65 + parseInt(btn.dataset.index))}</span>${btn.textContent.replace(/^[A-D]\.\s*/, '')}`;
+                } else {
+                    btn.classList.add('opacity-50');
                 }
                 btn.disabled = true;
             });
             
             // 计算分数
             calculateScore();
-            nextBtn.disabled = false;
             
             // 自动跳转到下一题（延迟1.5秒）
             if (currentQuestion < currentQuestions.length - 1) {
+                // 显示即将跳转的提示
+                nextBtn.textContent = '即将进入下一题...';
+                nextBtn.disabled = true;
+                
                 setTimeout(() => {
                     currentQuestion++;
                     showQuestion(currentQuestions[currentQuestion]);
                     updateProgress();
+                    nextBtn.textContent = '下一题<i class="fa fa-arrow-right ml-2"></i>';
+                }, 1500);
+            } else {
+                // 最后一题，显示结果
+                setTimeout(() => {
+                    showResult();
                 }, 1500);
             }
         }
