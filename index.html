@@ -652,23 +652,18 @@
             // 计算分数
             calculateScore();
             
-            // 自动跳转到下一题（延迟1.5秒）
+            // 自动跳转到下一题（快速响应，延迟500ms）
             if (currentQuestion < currentQuestions.length - 1) {
-                // 显示即将跳转的提示
-                nextBtn.textContent = '即将进入下一题...';
-                nextBtn.disabled = true;
-                
                 setTimeout(() => {
                     currentQuestion++;
                     showQuestion(currentQuestions[currentQuestion]);
                     updateProgress();
-                    nextBtn.textContent = '下一题<i class="fa fa-arrow-right ml-2"></i>';
-                }, 1500);
+                }, 500);
             } else {
                 // 最后一题，显示结果
                 setTimeout(() => {
                     showResult();
-                }, 1500);
+                }, 500);
             }
         }
 
