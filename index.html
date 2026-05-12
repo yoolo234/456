@@ -479,11 +479,15 @@
                 const data = await response.json();
                 questionDatabase = data.questions || [];
                 console.log('Question database loaded:', questionDatabase.length, 'questions');
+                // 数据库加载完成后，初始化闯关
+                startQuiz();
                 return true;
             } catch (error) {
                 console.error('Failed to load database:', error);
                 // 使用备用数据
                 questionDatabase = getBackupQuestions();
+                // 即使使用备用数据也要初始化闯关
+                startQuiz();
                 return false;
             }
         }
@@ -690,8 +694,7 @@
         // 重新开始
         restartTheory.addEventListener('click', startQuiz);
 
-        // 初始化理论闯关
-        startQuiz();
+        // 注意：startQuiz() 现在由 loadQuestionDatabase() 在数据库加载完成后调用
 
         // 场景练习逻辑
         function initPractice() {
