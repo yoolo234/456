@@ -242,21 +242,11 @@
                     <p class="text-gray-600 dark:text-gray-400 mb-6">选择一个场景，编写提示词并提交，系统将自动评估你的提示词质量</p>
                     
                     <!-- 场景选择 -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                        <button class="scenario-btn p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg hover:border-primary transition-colors text-left" data-scenario="email">
-                            <i class="fa fa-envelope text-2xl text-primary mb-2"></i>
-                            <h4 class="font-bold">邮件撰写</h4>
-                            <p class="text-sm text-gray-600 dark:text-gray-400">编写一封正式的商务邮件</p>
-                        </button>
-                        <button class="scenario-btn p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg hover:border-primary transition-colors text-left" data-scenario="summary">
-                            <i class="fa fa-file-text text-2xl text-success mb-2"></i>
-                            <h4 class="font-bold">内容总结</h4>
-                            <p class="text-sm text-gray-600 dark:text-gray-400">对长文本进行精炼总结</p>
-                        </button>
-                        <button class="scenario-btn p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg hover:border-primary transition-colors text-left" data-scenario="code">
-                            <i class="fa fa-code text-2xl text-warning mb-2"></i>
-                            <h4 class="font-bold">代码生成</h4>
-                            <p class="text-sm text-gray-600 dark:text-gray-400">生成特定功能的代码</p>
+                    <div class="mb-6">
+                        <button id="random-scenario-btn" class="w-full p-4 border-2 border-primary bg-blue-50 dark:bg-blue-900/20 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors text-left">
+                            <i class="fa fa-random text-2xl text-primary mb-2"></i>
+                            <h4 class="font-bold">随机场景</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">点击随机选择一个练习场景</p>
                         </button>
                     </div>
                     
@@ -707,7 +697,7 @@
 
         // 场景练习逻辑
         function initPractice() {
-            const scenarioBtns = document.querySelectorAll('.scenario-btn');
+            const randomScenarioBtn = document.getElementById('random-scenario-btn');
             const practiceArea = document.getElementById('practice-area');
             const scenarioDesc = document.getElementById('scenario-desc');
             const promptInput = document.getElementById('prompt-input');
@@ -718,20 +708,19 @@
             
             let currentScenario = null;
             
-            // 选择场景
-            scenarioBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    scenarioBtns.forEach(b => b.classList.remove('border-primary', 'bg-blue-50', 'dark:bg-blue-900/20'));
-                    btn.classList.add('border-primary', 'bg-blue-50', 'dark:bg-blue-900/20');
-                    
-                    currentScenario = btn.dataset.scenario;
-                    const scenario = scenarios[currentScenario];
-                    
-                    scenarioDesc.textContent = scenario.desc;
-                    practiceArea.classList.remove('hidden');
-                    evaluationResult.classList.add('hidden');
-                    promptInput.value = '';
-                });
+            // 随机选择场景
+            randomScenarioBtn.addEventListener('click', () => {
+                const scenarioKeys = Object.keys(scenarios);
+                const randomKey = scenarioKeys[Math.floor(Math.random() * scenarioKeys.length)];
+                currentScenario = randomKey;
+                const scenario = scenarios[randomKey];
+                
+                scenarioDesc.innerHTML = `<strong>${scenario.title}</strong><br><br>${scenario.desc}`;
+                practiceArea.classList.remove('hidden');
+                evaluationResult.classList.add('hidden');
+                promptInput.value = '';
+                
+                console.log('Random scenario selected:', scenario.title);
             });
             
             // 清空输入
