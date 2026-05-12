@@ -206,7 +206,7 @@
                     </div>
                     
                     <!-- 选项区域 -->
-                    <div id="answer-buttons" class="space-y-3 mb-6">
+                    <div id="answer-buttons" class="flex flex-col space-y-3 mb-6">
                         <!-- 选项将通过JS动态插入 -->
                     </div>
                     
@@ -610,16 +610,20 @@
             answerButtons.innerHTML = '';
             question.options.forEach((option, index) => {
                 const button = document.createElement('button');
-                button.classList.add('p-3', 'rounded-lg', 'border', 'dark:border-gray-600', 'text-left', 'hover:bg-gray-100', 'dark:hover:bg-gray-700', 'transition-colors');
-                button.innerHTML = `${String.fromCharCode(65 + index)}. ${option}`;
+                button.classList.add('w-full', 'p-4', 'rounded-lg', 'border-2', 'border-gray-200', 'dark:border-gray-600', 'text-left', 'hover:border-primary', 'hover:bg-gray-50', 'dark:hover:bg-gray-700', 'transition-all', 'duration-200');
+                button.innerHTML = `<span class="inline-block w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 text-center leading-8 mr-3 font-medium">${String.fromCharCode(65 + index)}</span>${option}`;
                 button.dataset.index = index;
                 
                 // 如果已经作答，显示答案
                 if (userAnswers[currentQuestion] !== undefined) {
                     if (index === question.answer) {
                         button.classList.add('bg-success', 'text-white', 'border-success');
+                        button.innerHTML = `<span class="inline-block w-8 h-8 rounded-full bg-white/20 text-center leading-8 mr-3 font-medium">${String.fromCharCode(65 + index)}</span>${option}`;
                     } else if (index === userAnswers[currentQuestion] && index !== question.answer) {
                         button.classList.add('bg-danger', 'text-white', 'border-danger');
+                        button.innerHTML = `<span class="inline-block w-8 h-8 rounded-full bg-white/20 text-center leading-8 mr-3 font-medium">${String.fromCharCode(65 + index)}</span>${option}`;
+                    } else {
+                        button.classList.add('opacity-50');
                     }
                 }
                 
