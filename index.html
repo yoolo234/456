@@ -658,6 +658,15 @@
             // 计算分数
             calculateScore();
             nextBtn.disabled = false;
+            
+            // 自动跳转到下一题（延迟1.5秒）
+            if (currentQuestion < currentQuestions.length - 1) {
+                setTimeout(() => {
+                    currentQuestion++;
+                    showQuestion(currentQuestions[currentQuestion]);
+                    updateProgress();
+                }, 1500);
+            }
         }
 
         // 计算分数
