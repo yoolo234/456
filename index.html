@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>智能提示词学习与闯关平台</title>
+    <title>智能提示词学习平台</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <script>
@@ -315,43 +315,132 @@
             });
         });
 
-        // 基础理论闯关数据
-        const questions = [
+        // 基础理论闯关题目数据库
+        const questionDatabase = [
+            // 第1组：基础概念
             {
+                id: 1,
+                category: "基础概念",
                 question: "以下哪项属于优秀提示词的核心原则？",
                 options: ["越简短越好", "清晰明确，包含具体要求", "使用专业术语", "让AI自由发挥"],
-                answer: 1
+                answer: 1,
+                explanation: "优秀的提示词应该清晰明确，包含具体的任务描述和要求，这样AI才能准确理解用户意图。"
             },
             {
+                id: 2,
+                category: "基础概念",
+                question: "提示词的核心目的是什么？",
+                options: ["测试AI能力", "清晰传达用户意图", "展示技术水平", "增加对话长度"],
+                answer: 1,
+                explanation: "提示词的核心目的是帮助AI准确理解用户的需求和意图，从而生成符合预期的响应。"
+            },
+            // 第2组：角色设定
+            {
+                id: 3,
+                category: "角色设定",
                 question: "“你是一名专业的健康营养师”属于提示词的哪种技巧？",
                 options: ["格式指定", "角色设定", "约束条件", "示例引导"],
-                answer: 1
+                answer: 1,
+                explanation: "角色设定法是指向AI指定一个专业角色，让AI从该角色的专业视角回答问题。"
             },
             {
+                id: 4,
+                category: "角色设定",
+                question: "使用角色设定技巧的主要好处是什么？",
+                options: ["增加趣味性", "提升回答的专业性和针对性", "减少回答字数", "加快响应速度"],
+                answer: 1,
+                explanation: "通过角色设定，AI可以从特定专业角度思考和回答，使输出更具专业性和针对性。"
+            },
+            // 第3组：格式指定
+            {
+                id: 5,
+                category: "格式指定",
                 question: "如果希望AI输出规整的表格，应该在提示词中添加什么？",
                 options: ["字数限制", "角色设定", "格式要求", "语言风格"],
-                answer: 2
+                answer: 2,
+                explanation: "明确指定输出格式（如表格、列表、JSON等）可以让AI生成更规整、更易于使用的结果。"
             },
             {
+                id: 6,
+                category: "格式指定",
+                question: "以下哪种格式要求最适合展示数据对比？",
+                options: ["纯文本描述", "表格", "诗歌形式", "对话形式"],
+                answer: 1,
+                explanation: "表格是展示数据对比最清晰、最直观的格式，便于读者快速比较不同项目。"
+            },
+            // 第4组：约束条件
+            {
+                id: 7,
+                category: "约束条件",
+                question: "在提示词中添加字数限制属于哪种技巧？",
+                options: ["角色设定", "格式指定", "约束条件", "示例引导"],
+                answer: 2,
+                explanation: "约束条件包括字数限制、语言风格、时间范围等，用于引导AI生成符合特定要求的内容。"
+            },
+            {
+                id: 8,
+                category: "约束条件",
+                question: "为什么需要在提示词中添加约束条件？",
+                options: ["让AI更难回答", "确保输出符合预期", "增加提示词长度", "测试AI的理解能力"],
+                answer: 1,
+                explanation: "约束条件可以帮助控制AI的输出范围，确保结果符合用户的具体需求和预期。"
+            },
+            // 第5组：示例引导
+            {
+                id: 9,
+                category: "示例引导",
+                question: "在提示词中添加示例的主要作用是？",
+                options: ["增加字数", "让AI参考格式和风格", "降低AI理解难度", "让提示词更专业"],
+                answer: 1,
+                explanation: "提供示例可以让AI直接参考输出格式和风格，是最有效的提示词优化方法之一。"
+            },
+            {
+                id: 10,
+                category: "示例引导",
+                question: "以下哪个提示词使用了示例引导技巧？",
+                options: ["写一篇文章", "按照以下格式回答：问题+答案", "解释这个概念", "分析这个案例"],
+                answer: 1,
+                explanation: "明确要求按照特定格式回答，并给出格式示例，这就是示例引导技巧。"
+            },
+            // 第6组：综合应用
+            {
+                id: 11,
+                category: "综合应用",
                 question: "以下哪个提示词更优秀？",
                 options: [
                     "写个文案",
                     "写一篇产品宣传文案，突出性价比，适合年轻人",
                     "为新款无线耳机写一段100字的宣传文案，风格活泼，突出续航和性价比"
                 ],
-                answer: 2
+                answer: 2,
+                explanation: "第三个提示词包含了明确的任务、受众、字数限制和核心卖点，是最完整的提示词。"
             },
             {
-                question: "在提示词中添加示例的主要作用是？",
-                options: ["增加字数", "让AI参考格式和风格", "降低AI理解难度", "让提示词更专业"],
-                answer: 1
+                id: 12,
+                category: "综合应用",
+                question: "构建优秀提示词的最佳顺序是什么？",
+                options: [
+                    "要求→背景→角色",
+                    "角色→背景→任务→要求",
+                    "任务→角色→要求",
+                    "背景→要求→任务"
+                ],
+                answer: 1,
+                explanation: "最佳顺序是：先设定角色，再说明背景，然后明确任务，最后添加约束要求。"
             }
         ];
+
+        // 从数据库中随机抽取题目
+        function getRandomQuestions(count = 5) {
+            const shuffled = [...questionDatabase].sort(() => Math.random() - 0.5);
+            return shuffled.slice(0, Math.min(count, shuffled.length));
+        }
 
         // 理论闯关逻辑
         let currentQuestion = 0;
         let userAnswers = [];
         let score = 0;
+        let currentQuestions = []; // 当前使用的题目列表（随机抽取）
 
         const questionContainer = document.getElementById('question-container');
         const answerButtons = document.getElementById('answer-buttons');
@@ -364,14 +453,16 @@
         const resultDesc = document.getElementById('result-desc');
         const restartTheory = document.getElementById('restart-theory');
 
-        // 初始化题目
+        // 初始化题目（随机选题）
         function startQuiz() {
             currentQuestion = 0;
             userAnswers = [];
             score = 0;
+            // 从数据库中随机抽取5道题目
+            currentQuestions = getRandomQuestions(5);
             theoryResult.classList.add('hidden');
             document.getElementById('theory').querySelector('.max-w-3xl > div').classList.remove('hidden');
-            showQuestion(questions[currentQuestion]);
+            showQuestion(currentQuestions[currentQuestion]);
             updateProgress();
         }
 
@@ -411,7 +502,7 @@
             if (userAnswers[currentQuestion] !== undefined) return;
             
             userAnswers[currentQuestion] = index;
-            const correct = questions[currentQuestion].answer;
+            const correct = currentQuestions[currentQuestion].answer;
             
             // 显示正确/错误
             const allButtons = answerButtons.querySelectorAll('button');
@@ -433,7 +524,7 @@
         // 计算分数
         function calculateScore() {
             score = 0;
-            questions.forEach((q, i) => {
+            currentQuestions.forEach((q, i) => {
                 if (userAnswers[i] === q.answer) score++;
             });
             updateProgress();
@@ -441,16 +532,16 @@
 
         // 更新进度
         function updateProgress() {
-            const progress = (currentQuestion + 1) / questions.length * 100;
+            const progress = (currentQuestion + 1) / currentQuestions.length * 100;
             progressBar.style.width = `${progress}%`;
-            scoreText.textContent = `${score}/${questions.length} 正确`;
+            scoreText.textContent = `${score}/${currentQuestions.length} 正确`;
         }
 
         // 下一题
         nextBtn.addEventListener('click', () => {
             currentQuestion++;
-            if (currentQuestion < questions.length) {
-                showQuestion(questions[currentQuestion]);
+            if (currentQuestion < currentQuestions.length) {
+                showQuestion(currentQuestions[currentQuestion]);
             } else {
                 showResult();
             }
@@ -460,7 +551,7 @@
         prevBtn.addEventListener('click', () => {
             if (currentQuestion > 0) {
                 currentQuestion--;
-                showQuestion(questions[currentQuestion]);
+                showQuestion(currentQuestions[currentQuestion]);
             }
         });
 
@@ -468,13 +559,16 @@
         function showResult() {
             document.getElementById('theory').querySelector('.max-w-3xl > div').classList.add('hidden');
             theoryResult.classList.remove('hidden');
-            finalScore.textContent = `最终得分：${score}/${questions.length}`;
+            finalScore.textContent = `最终得分：${score}/${currentQuestions.length}`;
             
             let desc, icon;
-            if (score === 5) {
+            const total = currentQuestions.length;
+            const percentage = score / total;
+            
+            if (percentage === 1) {
                 desc = '太棒了！你已经完全掌握了提示词基础理论！';
                 icon = 'fa-trophy text-yellow-500';
-            } else if (score >= 3) {
+            } else if (percentage >= 0.6) {
                 desc = '表现不错！继续学习知识卡片就能拿满分！';
                 icon = 'fa-smile-o text-green-500';
             } else {
