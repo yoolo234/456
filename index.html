@@ -584,32 +584,64 @@
         // 智能助手 SDK 初始化
         const COZE_WEB_SDK_ORIGIN = 'https://sdk.coze.site';
         
+        // 智能助手初始化函数
+        function initCozeSDK() {
+            const cozeWebSDK = document.getElementById('coze-web-sdk');
+            if (!cozeWebSDK) {
+                console.error('Coze Web SDK iframe not found');
+                return;
+            }
+            
+            // 初始化配置
+            const initConfig = {
+                type: 'INIT',
+                payload: {
+                    token: 'pat_xaOJpsAerYEzTMB3Hs3LlUPK9nQuCrNWtfecrEgm5PXEtUOUkKT2virI3qtzKDRJ',
+                    projectId: '7623242875668660265',
+                }
+            };
+            
+            console.log('Initializing Coze Web SDK with config:', initConfig);
+            cozeWebSDK.contentWindow.postMessage(initConfig, COZE_WEB_SDK_ORIGIN);
+        }
+        
+        // 消息监听器
         window.addEventListener('message', (event) => {
-            // 只处理来自 sdk 的消息
+            // 验证消息来源
             if (event.origin !== COZE_WEB_SDK_ORIGIN) {
+                console.warn('Received message from unknown origin:', event.origin);
                 return;
             }
             
             const data = event.data;
-            // sdk 资源加载完成的通知，所有消息都必须在此后发送才有效
+            console.log('Received message from Coze SDK:', data);
+            
+            // SDK 加载完成
             if (data.type === 'IFRAME_READY') {
-                const cozeWebSDK = document.getElementById('coze-web-sdk');
-                if (cozeWebSDK) {
-                    // 必须步骤：初始化 web SDK
-                    cozeWebSDK.contentWindow.postMessage({
-                        type: 'INIT',
-                        payload: {
-                            token: 'pat_xaOJpsAerYEzTMB3Hs3LlUPK9nQuCrNWtfecrEgm5PXEtUOUkKT2virI3qtzKDRJ',
-                            projectId: '7623242875668660265',
-                        }
-                    }, COZE_WEB_SDK_ORIGIN);
-                }
+                console.log('Coze SDK is ready, initializing...');
+                initCozeSDK();
             }
-            // token 过期的通知
+            
+            // 初始化成功
+            if (data.type === 'INIT_SUCCESS') {
+                console.log('Coze SDK initialized successfully');
+            }
+            
+            // 初始化失败/权限错误
+            if (data.type === 'INIT_FAILED' || data.type === 'ERROR') {
+                console.error('Coze SDK initialization failed:', data);
+                // 尝试重新初始化
+                setTimeout(() => {
+                    console.log('Retrying initialization...');
+                    initCozeSDK();
+                }, 3000);
+            }
+            
+            // Token 过期
             if (data.type === 'TOKEN_EXPIRED') {
+                console.warn('Coze SDK token expired, updating...');
                 const cozeWebSDK = document.getElementById('coze-web-sdk');
                 if (cozeWebSDK) {
-                    // 更新 token
                     cozeWebSDK.contentWindow.postMessage({
                         type: 'UPDATE_TOKEN',
                         payload: {
@@ -617,6 +649,22 @@
                         }
                     }, COZE_WEB_SDK_ORIGIN);
                 }
+            }
+            
+            // 其他消息类型
+            if (data.type === 'MESSAGE_RECEIVED' || data.type === 'MESSAGE_SENT') {
+                console.log('Coze SDK message:', data);
+            }
+        });
+        
+        // 页面加载完成后尝试初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            const cozeWebSDK = document.getElementById('coze-web-sdk');
+            if (cozeWebSDK) {
+                // 监听 iframe 加载完成
+                cozeWebSDK.addEventListener('load', () => {
+                    console.log('Coze iframe loaded');
+                });
             }
         });
     </script>
