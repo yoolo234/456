@@ -784,18 +784,18 @@
                 
                 // 检查各项标准
                 if (prompt.length > 20) {
-                    checks.push({ name: '内容完整度', status: 'good', message: '提示词内容较为完整' });
+                    checks.push({ name: '明确的任务', status: 'good', message: '任务明确，避免模糊性' });
                     score += 30;
                 } else {
-                    checks.push({ name: '内容完整度', status: 'warning', message: '提示词可以更详细一些' });
+                    checks.push({ name: '明确的任务', status: 'warning', message: '提示词可以更详细一些' });
                     score += 15;
                 }
                 
                 if (prompt.includes('请') || prompt.includes('需要') || prompt.includes('要求')) {
-                    checks.push({ name: '礼貌用语', status: 'good', message: '使用了恰当的礼貌用语' });
+                    checks.push({ name: '角色限定', status: 'good', message: '是否包含角色设定' });
                     score += 20;
                 } else {
-                    checks.push({ name: '礼貌用语', status: 'neutral', message: '可以适当添加礼貌用语' });
+                    checks.push({ name: '角色限定', status: 'neutral', message: '建议增加角色设定' });
                     score += 10;
                 }
                 
@@ -808,10 +808,10 @@
                 }
                 
                 if (prompt.includes('例如') || prompt.includes('比如') || prompt.includes('像')) {
-                    checks.push({ name: '示例引导', status: 'good', message: '使用了示例引导技巧' });
+                    checks.push({ name: '背景信息', status: 'good', message: '包含了背景信息' });
                     score += 20;
                 } else {
-                    checks.push({ name: '示例引导', status: 'neutral', message: '可以添加示例帮助AI理解' });
+                    checks.push({ name: '背景信息', status: 'neutral', message: '可以添加背景信息帮助AI理解' });
                 }
                 
                 let level, message;
