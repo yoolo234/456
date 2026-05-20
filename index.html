@@ -791,11 +791,23 @@
                     score += 15;
                 }
                 
-                if (prompt.includes('请') || prompt.includes('需要') || prompt.includes('要求')) {
-                    checks.push({ name: '角色限定', status: 'good', message: '是否包含角色设定' });
+                // 检查是否包含角色设定，如：你是一个技术面试专家
+                const rolePatterns = [
+                    /你是[一|一]个[\u4e00-\u9fa5]+/,
+                    /你是[一|一]名[\u4e00-\u9fa5]+/,
+                    /你作为[\u4e00-\u9fa5]+/,
+                    /请扮演[\u4e00-\u9fa5]+/,
+                    /请作为[\u4e00-\u9fa5]+/,
+                    /假设你是[\u4e00-\u9fa5]+/,
+                    /我希望你作为[\u4e00-\u9fa5]+/
+                ];
+                const hasRoleSetting = rolePatterns.some(pattern => pattern.test(prompt));
+                
+                if (hasRoleSetting) {
+                    checks.push({ name: '角色限定', status: 'good', message: '包含角色设定，如"你是一个技术面试专家"' });
                     score += 20;
                 } else {
-                    checks.push({ name: '角色限定', status: 'neutral', message: '建议增加角色设定' });
+                    checks.push({ name: '角色限定', status: 'neutral', message: '建议增加角色设定，如"你是一个技术面试专家"' });
                     score += 10;
                 }
                 
